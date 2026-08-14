@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PhishGuard | URL Security Checker</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f5f7fa;
+            color: #1f2937;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 550px;
+        }
+
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #6b7280;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #2563eb;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .result {
+            display: none;
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .result.phishing {
+            display: block;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+        }
+
+        .result.legitimate {
+            display: block;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+        }
+
+        .result h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+
+        .result-row span:last-child {
+            font-weight: 600;
+        }
+
+        .error {
+            display: none;
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            background: #fef2f2;
+            color: #b91c1c;
+            font-size: 14px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="card">
+
+            <div class="header">
+                <h1>PhishGuard</h1>
+                <p>
+                    Enter a website URL and select a machine learning model
+                    to analyze whether the website may be phishing.
+                </p>
+            </div>
+
+
+            <!-- Model Selection -->
+
+            <div class="form-group">
+                <label for="model">Select Classification Model</label>
+
+                <select id="model">
+
+                    <option value="logistic_regression">
+                        Logistic Regression
+                    </option>
+
+                    <option value="decision_tree">
+                        Decision Tree
+                    </option>
+
+                    <option value="knn">
+                        K-Nearest Neighbors
+                    </option>
+
+                    <option value="naive_bayes">
+                        Naive Bayes
+                    </option>
+
+                    <option value="random_forest">
+                        Random Forest
+                    </option>
+
+                </select>
+            </div>
+
+
+            <!-- URL Input -->
+
+            <div class="form-group">
+                <label for="url">Website URL</label>
+
+                <input
+                    type="text"
+                    id="url"
+                    placeholder="https://example.com"
+                >
+            </div>
+
+
+            <!-- Analyze Button -->
+
+            <button id="analyzeButton" onclick="analyzeURL()">
+                Analyze URL
+            </button>
+
+
+            <!-- Loading -->
+
+            <div class="loading" id="loading">
+                Analyzing website...
+            </div>
+
+
+            <!-- Error -->
+
+            <div class="error" id="error"></div>
+
+
+            <!-- Result -->
+
+            <div class="result" id="result">
+
+                <h2 id="predictionText">
+                    Prediction
+                </h2>
+
+                <div class="result-row">
+                    <span>Selected Model</span>
+                    <span id="selectedModel"></span>
+                </div>
+
+                <div class="result-row">
+                    <span>Prediction</span>
+                    <span id="prediction"></span>
+                </div>
+
+                <div class="result-row">
+                    <span>Confidence</span>
+                    <span id="confidence"></span>
+                </div>
+
+                <div class="result-row">
+                    <span>Analyzed URL</span>
+                    <span id="analyzedUrl"></span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer">
+            Phishing Detection System · Machine Learning Project
+        </div>
+
+    </div>
+
+
+    <script>
+
+        async function analyzeURL() {
+
+            const url = document.getElementById("url").value.trim();
+
+            const model = document.getElementById("model").value;
+
+            const button = document.getElementById("analyzeButton");
+
+            const loading = document.getElementById("loading");
+
+            const result = document.getElementById("result");
+
+            const error = document.getElementById("error");
+
+
+            // Reset previous output
+
+            result.style.display = "none";
+
+            error.style.display = "none";
+
+
+            // Validate URL
+
+            if (!url) {
+
+                error.innerText =
+                    "Please enter a website URL.";
+
+                error.style.display = "block";
+
+                return;
+            }
+
+
+            // Show loading state
+
+            button.disabled = true;
+
+            button.innerText = "Analyzing...";
+
+            loading.style.display = "block";
+
+
+            try {
+
+                // Send request to backend
+
+                const response = await fetch(
+                    "/predict",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            url: url,
+                            model: model
+                        })
+                    }
+                );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Unable to analyze this URL."
+                    );
+                }
+
+
+                const data = await response.json();
+
+
+                /*
+                Expected backend response:
+
+                {
+                    "prediction": "Phishing",
+                    "confidence": 94.7,
+                    "model": "Logistic Regression"
+                }
+                */
+
+
+                document.getElementById(
+                    "selectedModel"
+                ).innerText =
+                document.getElementById("model").options[
+                document.getElementById("model").selectedIndex
+                ].text;
+
+                document.getElementById(
+                    "prediction"
+                ).innerText = data.prediction;
+
+
+                document.getElementById(
+                    "confidence"
+                ).innerText =
+                    data.confidence + "%";
+
+
+                document.getElementById(
+                    "analyzedUrl"
+                ).innerText = url;
+
+
+                // Change result appearance
+
+                result.className = "result";
+
+
+                if (
+                    data.prediction.toLowerCase() === "phishing"
+                ) {
+
+                    result.classList.add(
+                        "phishing"
+                    );
+
+                    document.getElementById(
+                        "predictionText"
+                    ).innerText =
+                        "⚠️ Potential Phishing Website";
+
+                } else {
+
+                    result.classList.add(
+                        "legitimate"
+                    );
+
+                    document.getElementById(
+                        "predictionText"
+                    ).innerText =
+                        "✓ Website Appears Legitimate";
+                }
+
+
+                result.style.display = "block";
+
+
+            } catch (err) {
+
+                error.innerText = err.message;
+
+                error.style.display = "block";
+
+            } finally {
+
+                button.disabled = false;
+
+                button.innerText = "Analyze URL";
+
+                loading.style.display = "none";
+            }
+        }
+
+    </script>
+
+</body>
+</html>
