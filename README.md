@@ -108,15 +108,11 @@ The following metrics were used for comparison:
 
 | ML Model Name | Accuracy | AUC | Precision | Recall | F1 | MCC |
 |---|---:|---:|---:|---:|---:|---:|
-| Logistic Regression | XX.XX% | XX.XX | XX.XX% | XX.XX% | XX.XX% | XX.XX |
-| Decision Tree | 85.04% | XX.XX | XX.XX% | 86.70% | 85.28% | XX.XX |
-| kNN | 88.01% | XX.XX | XX.XX% | 86.79% | 87.87% | XX.XX |
-| Naive Bayes | 70.82% | XX.XX | 92.81% | 45.14% | 60.74% | XX.XX |
-| Random Forest (Ensemble) | 89.68% | XX.XX | XX.XX% | 89.33% | 89.64% | XX.XX |
-
-> **Note:** Replace the `XX.XX` values with the AUC, Precision, and MCC values obtained
-> from your final model evaluation. These values should be calculated on the same test set
-> used for the other metrics.
+| Logistic Regression | 84.67% | 0.9284 | 86.62% | 82.00% | 84.25% | 0.6943 |
+| Decision Tree | 87.17% | 0.9496 | 86.08% | 88.67% | 87.36% | 0.743 |
+| kNN | 95.03% | .9451 | 99.65% | 95.00% | 92.06% | 0.9477 |
+| Naive Bayes | 66.67% | 0.7844 | 94.64% | 35.33% | 51.46% | 0.4277 |
+| Random Forest (Ensemble) | 95.17% | 0.9905 | 96.89% | 93.33% | 95.08% | 0.9039 |
 
 ---
 
@@ -136,9 +132,9 @@ The following metrics were used for comparison:
 
 It achieved the highest observed performance with:
 
-- **Accuracy:** 89.68%
-- **Recall:** 89.33%
-- **F1 Score:** 89.64%
+- **Accuracy:** 95.17%
+- **Recall:** 93.33%
+- **F1 Score:** 96.89%
 
 Random Forest provides a strong balance between correctly identifying phishing websites
 and avoiding false classifications. Its high recall is particularly important for phishing
